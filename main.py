@@ -1,7 +1,10 @@
+import sys
+sys.path.append('/Users/junhao/Desktop/class/rf/hw3ab/roboschool')
+
 import argparse
 from itertools import count
 
-import gym
+import gym, roboschool
 import scipy.optimize
 
 import torch
@@ -40,7 +43,10 @@ parser.add_argument('--log-interval', type=int, default=1, metavar='N',
                     help='interval between training status logs (default: 10)')
 args = parser.parse_args()
 
-env = gym.make(args.env_name)
+
+# env = gym.make(args.env_name)
+env = gym.make("RoboschoolHumanoidFlagrun-v1")
+
 
 num_inputs = env.observation_space.shape[0]
 num_actions = env.action_space.shape[0]
@@ -125,6 +131,14 @@ def update_params(batch):
 
     trpo_step(policy_net, get_loss, get_kl, args.max_kl, args.damping)
 
+##TODO: convert below to roboschool
+print('\nbegin you work here!\n')
+
+################## new code
+
+
+################## old code
+
 running_state = ZFilter((num_inputs,), clip=5)
 running_reward = ZFilter((1,), demean=False, clip=10)
 
@@ -148,6 +162,10 @@ for i_episode in count(1):
             next_state = running_state(next_state)
 
             mask = 1
+            still_open = env.render("human")
+            if still_open==False:
+                break
+
             if done:
                 mask = 0
 
